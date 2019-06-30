@@ -84,7 +84,9 @@ import Foundation
 ///=========================================
 ///                 1
 ///=========================================
-let answer = 50 //= Int(arc4random() % 100) + 1
+func random (min: Int, max: Int) -> Int {
+    return Int(arc4random()) % (max-min) + min
+}
 
 enum Result: String {
     case wrong = "Wrong"
@@ -93,35 +95,19 @@ enum Result: String {
     case high = "High"
 }
 
-func inputAndCheck() -> Bool {
-    
-    let userInput = readLine()
-    
-    guard let unwrappedInput = userInput, let inputNumber = Int(unwrappedInput) else {
-        print("Wrong")
-         return true
-    }
-    
-    if inputNumber == answer {
-        return false
-    }
-    
-    if inputNumber > answer {
-        print("High")
-    }
-    
-    if inputNumber < answer {
-        print("Low")
-    }
-    
-    return true
-}
+func inputAndCheck(_ answer: Int) -> () -> Bool { return { printResult(evaluate(answer)) } }
 
-func evaluate(_ n: Int) -> Result {
+func evaluate(_ answer: Int) -> Result {
     guard let num = Int(readLine() ?? "") else { return .wrong }
     if num > answer { return .high }
     if num < answer { return .low }
     return .correct
+}
+
+func printResult(_ r: Result) -> Bool {
+    if r == .correct { return false }
+    print(r.rawValue)
+    return true
 }
 
 let corrected: (Int) -> Void = { print("Correct!: \($0)") }
@@ -134,4 +120,4 @@ func countingLoop (_ needContinue: @escaping () -> Bool, _ finished: (Int) -> Vo
     finished(counter(0))
 }
 
-countingLoop(inputAndCheck, corrected)
+countingLoop(inputAndCheck(random(min: 0, max: 100)), corrected)
