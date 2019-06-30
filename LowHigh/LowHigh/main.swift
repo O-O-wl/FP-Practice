@@ -21,31 +21,64 @@ import Foundation
 //=====================================================================
 
 ///=========================================
+///             (non-FP) - my
+///=========================================
+//
+//let random = { Int.random(in: 1...100) }
+//let fetchInput = { Int(readLine()!) ?? -1 }
+//let anwser = random()
+//var count = 0
+//var input: Int
+//
+//repeat {
+//    input = fetchInput()
+//    count+=1
+//    var message = ""
+//    if input < anwser {
+//        message = "Low"
+//    }
+//    else if input > anwser {
+//        message = "High"
+//    }
+//    else if input == anwser{
+//        message = "Correct! \(count)번 시도"
+//    }
+//    else {
+//      message = "Wrong"
+//    }
+//    print(message)
+//
+//}while input != anwser
+
+///=========================================
 ///             (non-FP)
 ///=========================================
-
-let random = { Int.random(in: 1...100) }
-let fetchInput = { Int(readLine()!) ?? -1 }
-let anwser = random()
+let answer = Int(arc4random() % 100) + 1
 var count = 0
-var input: Int
 
-repeat {
-    input = fetchInput()
-    count+=1
-    var message = ""
-    if input < anwser {
-        message = "Low"
-    }
-    else if input > anwser {
-        message = "High"
-    }
-    else if input == anwser{
-        message = "Correct! \(count)번 시도"
-    }
-    else {
-      message = "Wrong"
-    }
-    print(message)
+while true {
     
-}while input != anwser
+    let userInput = readLine()
+    
+    guard let unwrappedInput = userInput, let inputNumber = Int(unwrappedInput) else {
+        print("Wrong")
+        continue
+    }
+    
+    if inputNumber == answer {
+        print("Correct! : \(count)")
+        break
+    }
+    
+    if inputNumber > answer {
+        print("High")
+    }
+    
+    if inputNumber < answer {
+        print("Low")
+    }
+    
+    count += 1
+}
+
+
