@@ -84,7 +84,14 @@ import Foundation
 ///=========================================
 ///                 1
 ///=========================================
-let answer = Int(arc4random() % 100) + 1
+let answer = 50 //= Int(arc4random() % 100) + 1
+
+enum Result: String {
+    case wrong = "Wrong"
+    case correct = "Correct!"
+    case low = "Low"
+    case high = "High"
+}
 
 func inputAndCheck() -> Bool {
     
@@ -108,6 +115,13 @@ func inputAndCheck() -> Bool {
     }
     
     return true
+}
+
+func evaluate(_ n: Int) -> Result {
+    guard let num = Int(readLine() ?? "") else { return .wrong }
+    if num > answer { return .high }
+    if num < answer { return .low }
+    return .correct
 }
 
 let corrected: (Int) -> Void = { print("Correct!: \($0)") }
