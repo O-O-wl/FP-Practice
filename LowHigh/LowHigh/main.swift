@@ -85,20 +85,18 @@ import Foundation
 ///                 1
 ///=========================================
 let answer = Int(arc4random() % 100) + 1
-var count = 0
 
-while true {
+func inputAndCheck() -> Bool {
     
     let userInput = readLine()
     
     guard let unwrappedInput = userInput, let inputNumber = Int(unwrappedInput) else {
         print("Wrong")
-        continue
+         return true
     }
     
     if inputNumber == answer {
-        print("Correct! : \(count)")
-        break
+        return false
     }
     
     if inputNumber > answer {
@@ -109,15 +107,15 @@ while true {
         print("Low")
     }
     
-    count += 1
+    return true
 }
 
-func countingLoop (_ needContinue: () -> Bool) {
-    var count = 0
-    while true {
-        count+=1
-        if !needContinue() { break }
+func countingLoop (_ needContinue: @escaping () -> Bool) {
+    func counter(_ c: Int = 0) -> Int {
+         if !needContinue() { return c+1 }
+        return counter(c+1)
     }
+    print("Correct!: \(counter())")
 }
 
-
+countingLoop(inputAndCheck)
