@@ -53,6 +53,37 @@ import Foundation
 ///=========================================
 ///             (non-FP)
 ///=========================================
+//
+//let answer = Int(arc4random() % 100) + 1
+//var count = 0
+//
+//while true {
+//
+//    let userInput = readLine()
+//
+//    guard let unwrappedInput = userInput, let inputNumber = Int(unwrappedInput) else {
+//        print("Wrong")
+//        continue
+//    }
+//
+//    if inputNumber == answer {
+//        print("Correct! : \(count)")
+//        break
+//    }
+//
+//    if inputNumber > answer {
+//        print("High")
+//    }
+//
+//    if inputNumber < answer {
+//        print("Low")
+//    }
+//
+//    count += 1
+//}
+///=========================================
+///                 1
+///=========================================
 let answer = Int(arc4random() % 100) + 1
 var count = 0
 
@@ -79,6 +110,14 @@ while true {
     }
     
     count += 1
+}
+
+func countingLoop (_ needContinue: () -> Bool) {
+    var count = 0
+    while true {
+        count+=1
+        if !needContinue() { break }
+    }
 }
 
 
