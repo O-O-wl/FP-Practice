@@ -110,12 +110,14 @@ func inputAndCheck() -> Bool {
     return true
 }
 
-func countingLoop (_ needContinue: @escaping () -> Bool) {
+let corrected: (Int) -> Void = { print("Correct!: \($0)") }
+
+func countingLoop (_ needContinue: @escaping () -> Bool, _ finished: (Int) -> Void) {
     func counter(_ c: Int = 0) -> Int {
          if !needContinue() { return c+1 }
         return counter(c+1)
     }
-    print("Correct!: \(counter())")
+    finished(counter(0))
 }
 
-countingLoop(inputAndCheck)
+countingLoop(inputAndCheck, corrected)
