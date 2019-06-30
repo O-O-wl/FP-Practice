@@ -3,7 +3,6 @@ import UIKit
 ///========================
 ///        non - FP
 ///========================
-
 //var i = 1
 //while i <= 100 {
 //    if i % 3 == 0 && i % 5 == 0 {
@@ -21,7 +20,6 @@ import UIKit
 //
 //    i += 1
 //}
-
 ///========================
 ///           1
 ///========================
@@ -44,30 +42,41 @@ import UIKit
 //    print(output)
 //    i+=1
 //}
-
 ///========================
 ///          2
 ///========================
-func fizz(_ n: Int) -> String {
-    return n % 3 == 0 ? "fizz" : ""
-}
-func buzz(_ n: Int) -> String {
-    return n % 5 == 0 ? "buzz" : ""
+//func fizz(_ n: Int) -> String {
+//    return n % 3 == 0 ? "fizz" : ""
+//}
+//func buzz(_ n: Int) -> String {
+//    return n % 5 == 0 ? "buzz" : ""
+//}
+//
+//func fizzbuzz(_ n: Int) -> String {
+//    let result = fizz(n) + buzz(n)
+//    return result.isEmpty ? "\(n)" : result
+//}
+//
+//func loop(times: Int, do f:(Int) -> (Void)) {
+//    for i in 0...times {
+//        f(i)
+//    }
+//}
+//
+//loop(times: 100) {
+//    i in
+//    let result = fizzbuzz(i)
+//    print(result)
+//}
+///========================
+///          3
+///========================
+let fizz = { i in i%3 == 0 ? "fizz" : "" }
+let buzz = { i in i%5 == 0 ? "buzz" : "" }
+let fizzbuzz = { i in return {a,b in b.isEmpty ? a : b }("\(i)",fizz(i)+buzz(i)) }
+
+func loop(min: Int, max: Int, do f: (Int) -> Void){
+    Array(min...max).forEach(f)
 }
 
-func fizzbuzz(_ n: Int) -> String {
-    let result = fizz(n) + buzz(n)
-    return result.isEmpty ? "\(n)" : result
-}
-
-func loop(times: Int, do f:(Int) -> (Void)) {
-    for i in 0...times {
-        f(i)
-    }
-}
-
-loop(times: 100) {
-    i in
-    let result = fizzbuzz(i)
-    print(result)
-}
+loop(min:1,max:100){ print(fizzbuzz($0)) }
