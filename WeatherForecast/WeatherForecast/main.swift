@@ -78,13 +78,15 @@ let locQueryUrl = URL(string: "https://www.metaweather.com/api/location/search?q
 //                   - 1 -
 //==============================================
 
-func getData(_ url: URL, _ completed: (Data) -> Void) {
-    if let data = try? Data(contentsOf: url) {
-        completed(data)
+func getData(_ url: URL, _ completed: @escaping (Data) -> Void) {
+    DispatchQueue.global(qos: .default).async {
+        if let data = try? Data(contentsOf: url) {
+            completed(data)
+        }
     }
 }
 
-func getLocation(_ query: String, _ completed: ([Location]) -> Void) {
+func getLocation(_ query: String, _ completed: @escaping ([Location]) -> Void) {
     let url = URL(string: "https://www.metaweather.com/api/location/search?query=\(query)")!
     getData(url){ data in
         if let locations = try? JSONDecoder().decode([Location].self, from: data) {
@@ -93,7 +95,7 @@ func getLocation(_ query: String, _ completed: ([Location]) -> Void) {
     }
 }
 
-func getWeather(_ woeid: Int,_  completed: ([Weather]) -> Void) {
+func getWeather(_ woeid: Int,_  completed: @escaping ([Weather]) -> Void) {
     let url = URL(string: "https://www.metaweather.com/api/location/\(woeid)")!
     getData(url){ data in
         if let weatherInfo = try? JSONDecoder().decode(WeatherInfo.self, from: data) {
@@ -115,13 +117,16 @@ func printWeather(_ weather: Weather) {
 }
 
 
-getLocation(query) { locations in
+getLocation("san") { locations in
      locations.forEach { location in
-        print("[\(location.title)]")
         getWeather(location.woeid) { weathers in
+            print("[\(location.title)]")
             weathers.forEach {
                 printWeather($0)
             }
+            print("")
         }
     }
 }
+
+RunLoop.main.run()
