@@ -8,9 +8,6 @@
 
 import Foundation
 
-//==============================================
-//                 non - FP
-//==============================================
 
 struct Location: Codable {
     let title: String
@@ -41,34 +38,90 @@ struct Weather: Codable {
 let query = "seoul"
 let locQueryUrl = URL(string: "https://www.metaweather.com/api/location/search?query=\(query)")!
 
-if let locData = try? Data(contentsOf: locQueryUrl) {
-    if let locations = try? JSONDecoder().decode([Location].self, from: locData) {
-        
-        for location in locations {
-            print("[\(location.title)]")
-            
-            let woeid = location.woeid
-            let weatherUrl = URL(string: "https://www.metaweather.com/api/location/\(woeid)")!
-            
-            if let weatherData = try? Data(contentsOf: weatherUrl) {
-                if let weatherInfo = try? JSONDecoder().decode(WeatherInfo.self, from: weatherData) {
-                    
-                    let weathers = weatherInfo.consolidated_weather
-                    for weather in weathers {
-                        let state = weather.weather_state_name.padding(toLength: 15,
-                                                                       withPad: " ",
-                                                                       startingAt: 0)
-                        let forecast = String(format: "%@: %@ %2.2f°C ~ %2.2f°C",
-                                              weather.applicable_date,
-                                              state,
-                                              weather.max_temp,
-                                              weather.min_temp)
-                        print(forecast)
-                    }
-                }
+//==============================================
+//                 non - FP
+//==============================================
+
+//if let locData = try? Data(contentsOf: locQueryUrl) {
+//    if let locations = try? JSONDecoder().decode([Location].self, from: locData) {
+//
+//        for location in locations {
+//            print("[\(location.title)]")
+//
+//            let woeid = location.woeid
+//            let weatherUrl = URL(string: "https://www.metaweather.com/api/location/\(woeid)")!
+//
+//            if let weatherData = try? Data(contentsOf: weatherUrl) {
+//                if let weatherInfo = try? JSONDecoder().decode(WeatherInfo.self, from: weatherData) {
+//
+//                    let weathers = weatherInfo.consolidated_weather
+//                    for weather in weathers {
+//                        let state = weather.weather_state_name.padding(toLength: 15,
+//                                                                       withPad: " ",
+//                                                                       startingAt: 0)
+//                        let forecast = String(format: "%@: %@ %2.2f°C ~ %2.2f°C",
+//                                              weather.applicable_date,
+//                                              state,
+//                                              weather.max_temp,
+//                                              weather.min_temp)
+//                        print(forecast)
+//                    }
+//                }
+//            }
+//
+//            print("")
+//        }
+//    }
+//}
+
+//==============================================
+//                   - 1 -
+//==============================================
+
+func getData(_ url: URL, _ completed: (Data) -> Void) {
+    if let data = try? Data(contentsOf: url) {
+        completed(data)
+    }
+}
+
+func getLocation(_ query: String, _ completed: ([Location]) -> Void) {
+    let url = URL(string: "https://www.metaweather.com/api/location/search?query=\(query)")!
+    getData(url){ data in
+        if let locations = try? JSONDecoder().decode([Location].self, from: data) {
+            completed(locations)
+        }
+    }
+}
+
+func getWeather(_ woeid: Int,_  completed: ([Weather]) -> Void) {
+    let url = URL(string: "https://www.metaweather.com/api/location/\(woeid)")!
+    getData(url){ data in
+        if let weatherInfo = try? JSONDecoder().decode(WeatherInfo.self, from: data) {
+            completed(weatherInfo.consolidated_weather)
+        }
+    }
+}
+
+func printWeather(_ weather: Weather) {
+    let state = weather.weather_state_name.padding(toLength: 15,
+                                                   withPad: " ",
+                                                   startingAt: 0)
+    let forecast = String(format: "%@: %@ %2.2f°C ~ %2.2f°C",
+                          weather.applicable_date,
+                          state,
+                          weather.max_temp,
+                          weather.min_temp)
+    print(forecast)
+}
+
+
+getLocation(query) { locations in
+     locations.forEach { location in
+        print("[\(location.title)]")
+        getWeather(location.woeid) { weathers in
+            weathers.forEach {
+                printWeather($0)
             }
-            
-            print("")
         }
     }
 }
