@@ -76,29 +76,43 @@ struct State {
 var state = State(money: 0)
 
 
-func operation(_ state: State) -> State {
-    let input = consoleInput()
-    switch input {
-    case .moneyInput(let money):
-        let money = state.money + money
-        consoleOutput(.displayMoney(money))
-        return State(money: money)
-    case .productSelect(let product):
-        if state.money > product.rawValue {
-            consoleOutput(.productOut(product))
-            let money = state.money - product.rawValue
-            consoleOutput(.displayMoney(money))
+func operation(_ inp: @escaping () -> Input, _ out: @escaping (Output) -> ()) -> (State) -> State {
+    
+    let result: (State) -> State = {
+        state in
+        switch inp() {
+        case .moneyInput(let money):
+            let money = state.money + money
+            out(.displayMoney(money))
             return State(money: money)
-        }
-        else {
-            consoleOutput(.shortMoneyError)
+        case .productSelect(let product):
+            if state.money > product.rawValue {
+                out(.productOut(product))
+                let money = state.money - product.rawValue
+                out(.displayMoney(money))
+                return State(money: money)
+            }
+            else {
+                out(.shortMoneyError)
+                return state
+            }
+        case .reset:
+            out(.change(state.money))
+            out(.displayMoney(0))
+            return State(money: 0)
+        case .none:
             return state
         }
-    case .reset:
-        consoleOutput(.change(state.money))
-        consoleOutput(.displayMoney(0))
-        return State(money: 0)
-    case .none:
-         return state
     }
+    
+    return result
 }
+
+func machineLoop(_ f: @escaping (State) -> State ) {
+    func loop(_ s: State) {
+        loop(f(s))
+    }
+    loop(State(money: 0))
+}
+
+machineLoop(operation(consoleInput,consoleOutput))
