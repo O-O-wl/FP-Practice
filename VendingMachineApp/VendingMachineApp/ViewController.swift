@@ -19,41 +19,40 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.productOut.image = Product.cider.image
     }
     
     @IBAction func money100(_ sender: Any) {
-        state = operation({ () in self.uiInput("100") },uiOutput)(state)
+       handleProcess("100")
     }
     
     @IBAction func money500(_ sender: Any) {
-        state = operation({ () in self.uiInput("500") },uiOutput)(state)
+        handleProcess("500")
     }
     
     @IBAction func money1000(_ sender: Any) {
-        state = operation({ () in self.uiInput("1000") },uiOutput)(state)
+        handleProcess("1000")
     }
     
     @IBAction func selectCola(_ sender: Any) {
-        state = operation({ () in self.uiInput("cola") },uiOutput)(state)
+        handleProcess("cola")
     }
     
     @IBAction func selectCider(_ sender: Any) {
-        state = operation({ () in self.uiInput("cider") },uiOutput)(state)
+        handleProcess("cider")
     }
     
     @IBAction func selectFanta(_ sender: Any) {
-        state = operation({ () in self.uiInput("fanta") },uiOutput)(state)
+        handleProcess("fanta")
     }
     
     @IBAction func reset(_ sender: Any) {
-        state = operation({ () in self.uiInput("reset") },uiOutput)(state)
+        handleProcess("reset")
     }
     
     
-}
-// MARK: - Model
-extension ViewController {
+    
+    // MARK: - Model
+    
     
     struct State {
         var money: Int
@@ -89,28 +88,38 @@ extension ViewController {
         case change(Int)
         case shortMoneyError
     }
-}
-// MARK: - Logic
-extension ViewController {
     
-    func uiInput(_ s: String) -> Input {
-        switch s {
-        case "100":
-            return .inputMoney(100)
-        case "500":
-            return .inputMoney(500)
-        case "1000":
-            return .inputMoney(1000)
-        case "cola":
-            return .selectProduct(.cola)
-        case "cider":
-            return .selectProduct(.cider)
-        case "fanta":
-            return .selectProduct(.fanta)
-        case "reset":
-            return .reset
-        default:
-            return .none
+    // MARK: - Logic
+    
+    lazy var handleProcess = processHandle(State(money:0))
+    
+    func processHandle(_ initState: State) -> (String) -> Void {
+        var state = initState
+        return { command in
+            state = self.operation(self.uiInput(command), self.uiOutput)(state) }
+    }
+    
+    func uiInput(_ s: String) -> () -> Input {
+        
+        return {
+            switch s {
+            case "100":
+                return .inputMoney(100)
+            case "500":
+                return .inputMoney(500)
+            case "1000":
+                return .inputMoney(1000)
+            case "cola":
+                return .selectProduct(.cola)
+            case "cider":
+                return .selectProduct(.cider)
+            case "fanta":
+                return .selectProduct(.fanta)
+            case "reset":
+                return .reset
+            default:
+                return .none
+            }
         }
     }
     
